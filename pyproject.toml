@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "columns_widget"
+version = "0.0.1"
+description = "A widget hosting an instance of Columns tile matching game"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+columns = "columns_widget.cli:columns"
