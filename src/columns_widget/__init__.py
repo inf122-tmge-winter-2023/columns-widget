@@ -18,3 +18,4 @@ LOGGER.addHandler(LOG_HANDLER)
 
 __version__ = (0, 0, 1)
 
+from .columns_tile import ColumnsColor, ColumnsTile, ColumnsFaller
