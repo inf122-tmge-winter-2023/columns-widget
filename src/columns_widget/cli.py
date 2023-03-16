@@ -5,7 +5,6 @@
 """
 
 import click
-import tilematch_tools
 
 @click.command()
 def columns():

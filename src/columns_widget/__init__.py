@@ -6,6 +6,8 @@
 
 import logging
 
+from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller
+
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMAT = logging.Formatter('[%(asctime)s|%(name)s|%(levelname)s] - %(message)s')
@@ -17,5 +19,3 @@ LOG_HANDLER.setFormatter(LOG_FORMAT)
 LOGGER.addHandler(LOG_HANDLER)
 
 __version__ = (0, 0, 1)
-
-from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller

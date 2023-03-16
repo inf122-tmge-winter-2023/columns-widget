@@ -8,7 +8,7 @@ import random
 import logging
 from enum import StrEnum
 
-from tilematch_tools.model import Tile, TileGroup
+from tilematch_tools.model import Tile, MovementRule
 from tilematch_tools.core import TileBuilder
 
 from .columns_board import ColumnsBoard
@@ -16,6 +16,7 @@ from .columns_board import ColumnsBoard
 LOGGER = logging.getLogger(__name__)
 
 class ColumnsColor(StrEnum):
+    """Enumeration of colors used in Columns"""
     RED = "#a10b0b"
     ORANGE = "#ad6211"
     YELLOW = "#dce31b"
@@ -26,6 +27,7 @@ class ColumnsColor(StrEnum):
 
 class ColumnsTile(Tile):
     """Class representing a colums tile"""
+
     def __repr__(self):
         """Sane string representation"""
         if self.color == ColumnsColor.RED:
@@ -48,7 +50,18 @@ class ColumnsFaller:
     def __init__(self):
         self._descent_file = random.randint(1, ColumnsBoard.COLUMNS_BOARD_WIDTH)
         self._members = self._random_set_of_three()
-        
+
+    def move(self, rule: MovementRule):
+        """
+            Apply the given movement rule to the faller's member in order
+            :arg rule: movement rule object
+            :arg type: MovementRule
+            :returns: nothing
+            :rtype: None
+        """
+        for member in self._members:
+            member.move(rule)
+
 
     def _random_set_of_three(self) -> (ColumnsTile, ColumnsTile, ColumnsTile):
         """
@@ -57,7 +70,7 @@ class ColumnsFaller:
             :rtype: tuple
         """
         return [
-                self._random_columns_tile() 
+                self._random_columns_tile()
                 for _ in range(3)
                 ]
 
