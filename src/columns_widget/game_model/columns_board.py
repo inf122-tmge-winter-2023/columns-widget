@@ -7,9 +7,10 @@
 from tilematch_tools.model import GameBoard, NullTile
 
 class ColumnsBoard(GameBoard):
-    COLUMNS_BOARD_HEIGHT = 13
-    COLUMNS_BOARD_WIDTH = 7
     """
         Class representing a columns gameboard
-    """
+    """ 
+    COLUMNS_BOARD_HEIGHT = 13
+    COLUMNS_BOARD_WIDTH = 7
+   
     
