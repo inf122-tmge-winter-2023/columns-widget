@@ -32,6 +32,8 @@ class ColumnsTile(Tile):
             return 'R'
         if self.color == ColumnsColor.ORANGE:
             return 'O'
+        if self.color == ColumnsColor.YELLOW:
+            return 'Y'
         if self.color == ColumnsColor.GREEN:
             return 'G'
         if self.color == ColumnsColor.BLUE:
@@ -40,15 +42,13 @@ class ColumnsTile(Tile):
             return 'M'
         return '?'
 
-class ColumnsFaller(TileGroup):
+class ColumnsFaller:
     """Class representing a falling tile group"""
 
     def __init__(self):
-        center, upper, lower = self._random_set_of_three()
-        super().__init__(center)
-        self.add_sibling_tile(upper, 0, 1)
-        self.add_sibling_tile(lower, 0, -1)
         self._descent_file = random.randint(1, ColumnsBoard.COLUMNS_BOARD_WIDTH)
+        self._members = self._random_set_of_three()
+        
 
     def _random_set_of_three(self) -> (ColumnsTile, ColumnsTile, ColumnsTile):
         """
@@ -67,7 +67,12 @@ class ColumnsFaller(TileGroup):
             :returns: random tile
             :rtype: ColumnsTile
         """
+        # tiles with out of bounds as y-position are staged
         return TileBuilder() \
-                .add_position(self._descent_file, None) \ # tiles with None as y-position are staged
+                .add_position(self._descent_file, ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1) \
                 .add_color(random.choice(list(ColumnsColor))) \
                 .construct(tile_type=ColumnsTile)
+
+    @property
+    def size(self):
+        return len(self._members)
