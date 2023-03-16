@@ -5,3 +5,14 @@
 """
 
 from .columns_tile import ColumnsColor, ColumnsTile, ColumnsFaller
+from .columns_board import ColumnsBoard
+from .match_rules import (
+        ThreeFoldNorth,
+        ThreeFoldEast,
+        ThreeFoldSouth,
+        ThreeFoldWest,
+        ThreeFoldNorthEast,
+        ThreeFoldSouthEast,
+        ThreeFoldSouthWest,
+        ThreeFoldNorthWest
+        )
