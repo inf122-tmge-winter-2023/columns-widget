@@ -75,4 +75,9 @@ class ColumnsFaller:
 
     @property
     def size(self):
+        """
+            View of faller size property
+            :returns: # of members
+            :rtype: int
+        """
         return len(self._members)
