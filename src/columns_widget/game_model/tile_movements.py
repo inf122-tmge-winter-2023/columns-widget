@@ -4,24 +4,46 @@
     :module_author: Nathan Mendoza (nathancm@uci.edu)
 """
 
-from tilematch_tools.model import MovementRule
+from tilematch_tools.model import MovementRule, GameBoard, Tile, NullTile
 
 class SingleStepDescent(MovementRule):
     """
         Class that specifies that a ColumnsTile should make a descent by one level
     """
-
-    def __init__(self):
-        super().__init__(0, -1)
-
-    def exec(self, x: int, y: int) -> (int, int):
+    def apply(self, board: GameBoard, tile_to_move: Tile) -> None:
         """
-            Provide information required to apply this movement rule
-            :arg x: current x position
-            :arg y: current y position
-            :arg type: int
-            :arg type: int
-            :returns: new position
-            :rtype: (int, int)
+            Logic for executing this tile movement. Should raise exception if cannot be completed
+            :arg board: gameboard move will be executed on
+            :arg tile_to_move: tile to be moved by this movement rule
+            :arg type: GameBoard
+            :arg type: Tile
+            :raises: IllegalTileMovementException if the tile movement is illegal
+            :raises: InvalidBoardPositionError if the tile's new position is invalid
         """
-        return (x + self._dx, y + self._dy)
+        tile_to_move.position = (tile_to_move.position.x, tile_to_move.position.y - 1)
+        board.place_tile(tile_to_move)
+
+
+class AbsoluteDescent(MovementRule):
+    """
+        Class that specifies that a ColumnsTile descent until blocked
+    """
+    def apply(self, board: GameBoard, tile_to_move: Tile) -> None:
+        """
+            Logic for executing this tile movement. Should raise exception if cannot be completed
+            :arg board: gameboard move will be executed on
+            :arg tile_to_move: tile to be moved by this movement rule
+            :arg type: GameBoard
+            :arg type: Tile
+            :raises: IllegalTileMovementException if the tile movement is illegal
+            :raises: InvalidBoardPositionError if the tile's new position is invalid
+        """
+        descent_file, new_y_lvl = tile_to_move.position
+        while isinstance(board.tile_at(descent_file, new_y_level - 1), NullTile) and new_y_lvl > 1:
+            new_y_lvl -= 1
+
+        if tile_to_move.position.y != new_y_lvl:
+            tile_to_move.position = (tile_to_move.position.x, new_y_lvl)
+            board.place_tile(tile_to_move)
+
+        
