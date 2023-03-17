@@ -46,5 +46,3 @@ class AbsoluteDescent(MovementRule):
         if tile_to_move.position.y != new_y_lvl:
             tile_to_move.position = (descent_file, new_y_lvl)
             board.place_tile(tile_to_move)
-
-        
