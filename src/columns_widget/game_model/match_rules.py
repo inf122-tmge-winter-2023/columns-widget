@@ -10,6 +10,8 @@ from tilematch_tools.model.match import MatchCondition, ScanDelta
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
 from tilematch_tools.model import GameBoard, NullTile
 
+from .columns_tile import ColumnsTile
+
 LOGGER = logging.getLogger(__name__)
 
 class ThreeFoldMatch(MatchCondition):
@@ -17,7 +19,46 @@ class ThreeFoldMatch(MatchCondition):
         A generalized three match condition
     """
 
-    def check_match(self, board: GameBoard, start_x: int, start_y: int) -> MatchCondition.MatchFound or None:
+    def _can_extend_match(
+            self,
+            start_x: int,
+            start_y: int,
+            board: GameBoard,
+            matching_streak: [ColumnsTile],
+            distance_multiplier: int
+            ) -> bool:
+        """
+            Check if the matching streak can be extended
+            :arg start_x: x coordinate of the start of the matching streak
+            :arg start_y: y coordinate of the start of the matching streak
+            :arg board: board to check a match for
+            :arg matching_streak: the current matching streak
+            :arg distance_multiplier: the distance the matching streak is looking to extend to
+            :arg type: int
+            :arg type: int
+            :arg type: GameBoard
+            :arg type: list of ColumnTile, each are considered equal
+            :arg type: int
+            :returns: true if the matching streak can be extended, otherwise false
+            :rtype: bool
+        """
+        return all(
+                self._eq(
+                    prev,
+                    board.tile_at(
+                            start_x + self._scan_delta.value[0] * distance_multiplier,
+                            start_y + self._scan_delta.value[1] * distance_multiplier
+                        )
+                    ) for prev in matching_streak
+                )
+
+
+    def check_match(
+            self,
+            board: GameBoard, 
+            start_x: int, 
+            start_y: int
+            ) -> MatchCondition.MatchFound or None:
         """
             Check for a three-match on the given board starting at the specified position
             :arg board: the board to check a match for
@@ -31,9 +72,14 @@ class ThreeFoldMatch(MatchCondition):
         """
         if isinstance(board.tile_at(start_x, start_y), NullTile):
             LOGGER.info('No tile to match at (%d, %d)', start_x, start_y)
-            return
+            return None
         matching_tiles = [board.tile_at(start_x, start_y)]
-        LOGGER.info('Checking for match starting at (%d, %d). Using %s as the scan delta', start_x, start_y, str(self._scan_delta))
+        LOGGER.info(
+                'Checking for match starting at (%d, %d). Using %s as the scan delta',
+                start_x,
+                start_y,
+                str(self._scan_delta)
+                )
         try:
             for i in range(1, 3):
                 LOGGER.info(
@@ -41,15 +87,32 @@ class ThreeFoldMatch(MatchCondition):
                         start_x + self._scan_delta.value[0] * i,
                         start_y + self._scan_delta.value[1] * i
                         )
-                if all(self._eq(prev, board.tile_at(start_x + self._scan_delta.value[0] * i, start_y + self._scan_delta.value[1] * i)) for prev in matching_tiles):
-                    LOGGER.info('Tile at (%d, %d) joined the match!', start_x + self._scan_delta.value[0] * i, start_y + self._scan_delta.value[1] * i)
-                    matching_tiles.append(board.tile_at(start_x + self._scan_delta.value[0] * i, start_y + self._scan_delta.value[1] * i))
+                if self._can_extend_match(start_x, start_y, board, matching_tiles, i):
+                    LOGGER.info(
+                            'Tile at (%d, %d) joined the match!', 
+                            start_x + self._scan_delta.value[0] * i,
+                            start_y + self._scan_delta.value[1] * i
+                            )
+                    matching_tiles.append(
+                            board.tile_at(
+                                start_x + self._scan_delta.value[0] * i,
+                                start_y + self._scan_delta.value[1] * i
+                                )
+                            )
                 else:
-                    LOGGER.info('Tile at (%d, %d) broke the streak! Come on dude, WTF?!?', start_x + self._scan_delta.value[0] * i, start_x + self._scan_delta.value[1] * i)
-                    return
+                    LOGGER.info(
+                            'Tile at (%d, %d) broke the streak! Come on dude, WTF?!?',
+                            start_x + self._scan_delta.value[0] * i,
+                            start_x + self._scan_delta.value[1] * i
+                            )
+                    return None
         except InvalidBoardPositionError:
-            LOGGER.info('Matching sequence starting at (%d, %d) abruptly terminated', start_x, start_y)
-            return
+            LOGGER.info(
+                    'Matching sequence starting at (%d, %d) abruptly terminated',
+                    start_x,
+                    start_y
+                    )
+            return None
         else:
             LOGGER.info('Match of three discovered at (%d, %d)', start_x, start_y)
             return MatchCondition.MatchFound(self.point_value * len(matching_tiles), matching_tiles)
