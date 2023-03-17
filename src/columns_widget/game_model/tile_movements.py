@@ -40,7 +40,7 @@ class AbsoluteDescent(MovementRule):
         """
         descent_file = tile_to_move.position.x 
         new_y_lvl = tile_to_move.position.y
-        while isinstance(board.tile_at(descent_file, new_y_lvl - 1), NullTile) and new_y_lvl > 1:
+        while new_y_lvl > 1 and isinstance(board.tile_at(descent_file, new_y_lvl - 1), NullTile):
             new_y_lvl -= 1
 
         if tile_to_move.position.y != new_y_lvl:
