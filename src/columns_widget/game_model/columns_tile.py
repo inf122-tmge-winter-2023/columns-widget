@@ -46,22 +46,11 @@ class ColumnsTile(Tile):
 
 class ColumnsFaller:
     """Class representing a falling tile group"""
+    STAGED = ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1
 
     def __init__(self):
         self._descent_file = random.randint(1, ColumnsBoard.COLUMNS_BOARD_WIDTH)
         self._members = self._random_set_of_three()
-
-    def move(self, rule: MovementRule):
-        """
-            Apply the given movement rule to the faller's member in order
-            :arg rule: movement rule object
-            :arg type: MovementRule
-            :returns: nothing
-            :rtype: None
-        """
-        for member in self._members:
-            member.move(rule)
-
 
     def _random_set_of_three(self) -> (ColumnsTile, ColumnsTile, ColumnsTile):
         """
@@ -80,11 +69,19 @@ class ColumnsFaller:
             :returns: random tile
             :rtype: ColumnsTile
         """
-        # tiles with out of bounds as y-position are staged
         return TileBuilder() \
-                .add_position(self._descent_file, ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1) \
+                .add_position(self._descent_file, self.STAGED) \
                 .add_color(random.choice(list(ColumnsColor))) \
                 .construct(tile_type=ColumnsTile)
+
+    @property
+    def members(self):
+        """
+            View of faller's members
+            :returns: tiles composing the faller
+            :rtype: list
+        """
+        return self._members
 
     @property
     def size(self):
@@ -94,3 +91,25 @@ class ColumnsFaller:
             :rtype: int
         """
         return len(self._members)
+
+    @property
+    def positions(self) -> tuple:
+        """
+            View of the positions of tiles in faller
+            :returns: collection of tile positions
+            :rtype: tuple
+        """
+        return tuple(
+                self._members[0].position,
+                self._members[1].position,
+                self._members[2].position
+                )
+
+    @property
+    def descent_file(self) -> int:
+        """
+            View of the descent file is faller is on
+            :returns: faller's descent file
+            :rtype: int
+        """
+        return self._descent_file
