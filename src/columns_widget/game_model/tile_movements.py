@@ -38,12 +38,13 @@ class AbsoluteDescent(MovementRule):
             :raises: IllegalTileMovementException if the tile movement is illegal
             :raises: InvalidBoardPositionError if the tile's new position is invalid
         """
-        descent_file, new_y_lvl = tile_to_move.position
-        while isinstance(board.tile_at(descent_file, new_y_level - 1), NullTile) and new_y_lvl > 1:
+        descent_file = tile_to_move.position.x 
+        new_y_lvl = tile_to_move.position.y
+        while isinstance(board.tile_at(descent_file, new_y_lvl - 1), NullTile) and new_y_lvl > 1:
             new_y_lvl -= 1
 
         if tile_to_move.position.y != new_y_lvl:
-            tile_to_move.position = (tile_to_move.position.x, new_y_lvl)
+            tile_to_move.position = (descent_file, new_y_lvl)
             board.place_tile(tile_to_move)
 
         
