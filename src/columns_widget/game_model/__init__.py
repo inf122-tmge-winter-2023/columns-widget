@@ -6,6 +6,7 @@
 
 from .columns_tile import ColumnsColor, ColumnsTile, ColumnsFaller
 from .columns_board import ColumnsBoard
+from .columns_scoring import ColumnsScoring
 from .tile_movements import SingleStepDescent, AbsoluteDescent
 from .match_rules import (
         ThreeFoldNorth,

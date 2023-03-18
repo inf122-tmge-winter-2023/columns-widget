@@ -6,7 +6,10 @@
 
 import logging
 
-from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller
+from tilematch_tools import GameLoop
+from tilematch_tools import GameState
+
+from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, ColumnsScoring, ColumnsBoard
 
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
@@ -19,3 +22,45 @@ LOG_HANDLER.setFormatter(LOG_FORMAT)
 LOGGER.addHandler(LOG_HANDLER)
 
 __version__ = (0, 0, 1)
+
+
+class ColumnsGameState(GameState):
+    """
+        Columns game state logic
+    """
+
+    def __init__(self, board: ColumnsBoard, score: ColumnsScoring):
+        LOGGER.info('New columns game state')
+        super().__init__(board, score)
+        self._active_faller = None
+        self._next_faller = ColumnsFaller()
+
+    @property
+    def active_faller(self) -> ColumnsFaller:
+        """
+            Return a reference to current active faller
+            :rtype: ColumnsFaller
+        """
+        return self._active_faller
+
+    @property
+    def next_faller(self) -> ColumnsFaller:
+        """
+            Return a reference to the next faller
+            :rtype: ColumnsFaller
+        """
+        return self._next_faller
+
+    def cycle_fallers(self) -> None:
+        LOGGER.info('Cycling fallers')
+        self._active_faller = self._next_faller
+        self._next_faller = ColumnsFaller()
+
+
+class ColumnsGameLoop(GameLoop):
+    """
+        Game loop logic for columns
+    """
+    
+
+
