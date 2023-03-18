@@ -19,6 +19,20 @@ class FallerMovementRule(MovementRule):
         Class that generalizes how a ColumnsFaller moves
     """
 
+    @staticmethod
+    def resit_faller(board: GameBoard, faller: ColumnsFaller) -> None:
+        """
+            Resit a faller back onto the board
+            :arg board: board to resit the faller onto
+            :arg faller: the faller to resit
+            :arg type: GameBoard
+            :arg type; ColumnsFaller
+            :returns: nothing
+            :rtype: None
+        """
+        for tile in faller.members:
+            board.place_tile(tile)
+
     def __init__(self, callback = None):
         self._after = callback
         self._faller_origins = None
@@ -142,3 +156,29 @@ class FallerShiftLeft(FallerMovementRule):
             tile.position = (tile.position.x - 1, tile.position.y)
             if tile.position.y != ColumnsFaller.STAGED:
                 board.place_tile(tile)
+
+class FallerShuffleUp(FallerMovementRule):
+    """
+        Classe that specifies how a ColumnsFaller shuffles upwards
+    """
+
+    def __init__(self):
+        super().__init__(FallerMovementRule.resit_faller)
+
+    def apply(self, board: GameBoard, faller: ColumnsFaller) -> None:
+        """
+            Logic for executing this tile movement. Should raise exception if cannot be completed
+            :arg board: gameboard move will be executed on
+            :arg faller: faller to be moved by this movement rule (really a collection of tiles)
+            :arg type: GameBoard
+            :arg type: ColumnsFaller
+            :raises: IllegalTileMovementException if the tile movement is illegal
+            :raises: InvalidBoardPositionError if the tile's new position is invalid
+        """
+        member_list = faller.members
+        member_positions = faller.positions
+
+        member_list.insert(0, member_list.pop(2))
+
+        for tile, pos in zip(member_list, member_positions):
+            tile.position = pos
