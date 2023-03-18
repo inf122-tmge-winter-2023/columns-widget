@@ -19,5 +19,6 @@ from .match_rules import (
         )
 from .faller_movements import (
         FallerMovementRule,
-        FallerShiftRight
+        FallerShiftRight,
+        FallerShiftLeft
         )
