@@ -10,6 +10,7 @@ from tilematch_tools import GameLoop
 from tilematch_tools import GameState
 
 from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, ColumnsScoring, ColumnsBoard
+from .game_view import ColumnsControls, ColumnsView
 
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
@@ -61,6 +62,21 @@ class ColumnsGameLoop(GameLoop):
     """
         Game loop logic for columns
     """
+
+    def handle_input(self):
+        super().handle_input()
+
+    def find_matches(self, match_rules):
+        super().find_matches(match_rules)
+
+    def clear_matches(self, matches):
+        super().clear_matches(matches)
+
+    def update_view(self):
+        super().update_view()
+
+    def gameover(self):
+        super().gameover()
     
 
 
