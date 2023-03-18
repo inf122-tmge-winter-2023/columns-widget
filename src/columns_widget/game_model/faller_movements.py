@@ -48,8 +48,8 @@ class FallerMovementRule(MovementRule):
             for i, tile in enumerate(faller.members):
                 LOGGER.info(
                         'faller successfully moved from (%d, %d) -> (%d, %d)',
-                        self._faller_origins[i].x,
-                        self._faller_origins[i].y,
+                        self._faller_origins[i][0],
+                        self._faller_origins[i][1],
                         tile.position.x,
                         tile.position.y
                         )
@@ -85,19 +85,19 @@ class FallerMovementRule(MovementRule):
             LOGGER.info(
                     'Reverting faller member %d to position (%d, %d)',
                     i,
-                    self._faller_origins[i].x,
-                    self._faller_origins[i].y
+                    self._faller_origins[i][0],
+                    self._faller_origins[i][1]
             )
-            tile.position = (self._faller_origins[i].x, self._faller_origins[i].y)
+            tile.position = (self._faller_origins[i][0], self._faller_origins[i][1])
 
     def _mark_null(self, board: GameBoard) -> None:
-        for origin in self._faller_origins:
-            LOGGER.info('Marking (%d, %d) with a null tile', origin.x, origin.y)
-            if origin.y != ColumnsFaller.STAGED:
+        for x, y in self._faller_origins:
+            LOGGER.info('Marking (%d, %d) with a null tile', x, y)
+            if y != ColumnsFaller.STAGED:
                 board.place_tile(
                     NullTile(
                         **{
-                            'position': (origin.x, origin.y),
+                            'position': (x, y),
                             'color': '#D3D3D3'
                         }
                     )
