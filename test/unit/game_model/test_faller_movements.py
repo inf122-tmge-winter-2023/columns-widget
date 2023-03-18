@@ -4,7 +4,7 @@ import pytest
 
 from tilematch_tools import BoardFactory, NullTile, TileBuilder
 
-from columns_widget.game_model import FallerShiftRight, FallerShiftLeft, FallerShuffleUp, ColumnsBoard, ColumnsTile, ColumnsColor, ColumnsFaller
+from columns_widget.game_model import FallerShiftRight, FallerShiftLeft, FallerShuffleUp, FallerShuffleDown, ColumnsBoard, ColumnsTile, ColumnsColor, ColumnsFaller
 
 class TestFallerShiftMovement:
     def setup_method(self):
@@ -83,6 +83,10 @@ class TestFallerShiftMovement:
 def upward():
     return FallerShuffleUp()
 
+@pytest.fixture
+def downward():
+    return FallerShuffleDown()
+
 class TestFallerShuffleMovement:
     def setup_method(self):
         self.faller = ColumnsFaller()
@@ -107,5 +111,20 @@ class TestFallerShuffleMovement:
         init_state = self.faller.members.copy()
         for _ in range(3):
             upward.move(self.board, self.faller, self.board, self.faller) # listed twice for post move callback
+
+        assert self.faller.members == init_state
+
+    def test_can_shuffle_faller_tiles_downward(self, downward):
+        init_state = self.faller.members.copy()
+        downward.move(self.board, self.faller, self.board, self.faller) # listed twice for post move callback
+
+        assert self.faller.members[0] is init_state[1] and self.board.tile_at(init_state[1].position.x, init_state[1].position.y) is self.faller.members[0]
+        assert self.faller.members[1] is init_state[2] and self.board.tile_at(init_state[2].position.x, init_state[2].position.y) is self.faller.members[1]
+        assert self.faller.members[2] is init_state[0] and self.board.tile_at(init_state[0].position.x, init_state[0].position.y) is self.faller.members[2]
+        
+    def test_can_cycle_faller_with_downward_shuffle(self, downward):
+        init_state = self.faller.members.copy()
+        for _ in range(3):
+            downward.move(self.board, self.faller, self.board, self.faller) # listed twice for post move callback
 
         assert self.faller.members == init_state
