@@ -9,7 +9,7 @@ from abc import abstractmethod
 
 from .columns_tile import ColumnsTile, ColumnsFaller, ColumnsColor
 
-from tilematch_tools.model import MovementRule, NullTile, Gameboard
+from tilematch_tools.model import MovementRule, NullTile, GameBoard
 from tilematch_tools.model.exceptions import IllegalTileMovementException, InvalidBoardPositionError
 
 LOGGER = logging.getLogger(__name__)

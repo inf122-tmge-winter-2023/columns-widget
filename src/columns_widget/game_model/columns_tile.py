@@ -100,9 +100,7 @@ class ColumnsFaller:
             :rtype: tuple
         """
         return tuple(
-                self._members[0].position,
-                self._members[1].position,
-                self._members[2].position
+                member.position for member in self._members
                 )
 
     @property
