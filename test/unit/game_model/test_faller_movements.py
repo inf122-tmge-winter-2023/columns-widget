@@ -2,7 +2,7 @@
 
 import pytest
 
-from tilematch_tools import BoardFactory, NullTile
+from tilematch_tools import BoardFactory, NullTile, TileBuilder
 
 from columns_widget.game_model import FallerShiftRight, FallerShiftLeft, ColumnsBoard, ColumnsTile, ColumnsColor, ColumnsFaller
 
@@ -42,6 +42,39 @@ class TestFallerShiftMovement:
     ])
     def test_cannot_beyond_edge_of_board(self, shifter, result_file):
         for _ in range(4):
+            shifter.move(self.board, self.faller)
+
+        assert all(tile.position.x == result_file for tile in self.faller.members)
+
+    @pytest.mark.parametrize('shifter, block_file, result_file', [
+        (FallerShiftRight(), 7, 6),
+        (FallerShiftLeft(), 1, 2)
+    ])
+    def test_cannot_move_to_file_if_blocked_at_bottom(self, shifter, block_file, result_file):
+        self.board.place_tile(TileBuilder().add_position(block_file, 5).add_color(ColumnsColor.RED).construct(ColumnsTile))
+        for _ in range(3):
+            shifter.move(self.board, self.faller)
+
+        assert all(tile.position.x == result_file for tile in self.faller.members)
+
+    @pytest.mark.parametrize('shifter, block_file, result_file', [
+        (FallerShiftRight(), 7, 6),
+        (FallerShiftLeft(), 1, 2)
+    ])
+    def test_cannot_move_to_file_if_blocked_at_center(self, shifter, block_file, result_file):
+        self.board.place_tile(TileBuilder().add_position(block_file, 6).add_color(ColumnsColor.RED).construct(ColumnsTile))
+        for _ in range(3):
+            shifter.move(self.board, self.faller)
+
+        assert all(tile.position.x == result_file for tile in self.faller.members)
+
+    @pytest.mark.parametrize('shifter, block_file, result_file', [
+        (FallerShiftRight(), 7, 6),
+        (FallerShiftLeft(), 1, 2)
+    ])
+    def test_cannot_move_to_file_if_blocked_at_top(self, shifter, block_file, result_file):
+        self.board.place_tile(TileBuilder().add_position(block_file, 7).add_color(ColumnsColor.RED).construct(ColumnsTile))
+        for _ in range(3):
             shifter.move(self.board, self.faller)
 
         assert all(tile.position.x == result_file for tile in self.faller.members)
