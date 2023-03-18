@@ -21,5 +21,6 @@ from .faller_movements import (
         FallerMovementRule,
         FallerShiftRight,
         FallerShiftLeft,
-        FallerShuffleUp
+        FallerShuffleUp,
+        FallerShuffleDown
         )

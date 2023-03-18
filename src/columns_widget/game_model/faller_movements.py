@@ -182,3 +182,29 @@ class FallerShuffleUp(FallerMovementRule):
 
         for tile, pos in zip(member_list, member_positions):
             tile.position = pos
+
+class FallerShuffleDown(FallerMovementRule):
+    """
+        Classe that specifies how a ColumnsFaller shuffles upwards
+    """
+
+    def __init__(self):
+        super().__init__(FallerMovementRule.resit_faller)
+
+    def apply(self, board: GameBoard, faller: ColumnsFaller) -> None:
+        """
+            Logic for executing this tile movement. Should raise exception if cannot be completed
+            :arg board: gameboard move will be executed on
+            :arg faller: faller to be moved by this movement rule (really a collection of tiles)
+            :arg type: GameBoard
+            :arg type: ColumnsFaller
+            :raises: IllegalTileMovementException if the tile movement is illegal
+            :raises: InvalidBoardPositionError if the tile's new position is invalid
+        """
+        member_list = faller.members
+        member_positions = faller.positions
+
+        member_list.append(member_list.pop(0))
+
+        for tile, pos in zip(member_list, member_positions):
+            tile.position = pos
