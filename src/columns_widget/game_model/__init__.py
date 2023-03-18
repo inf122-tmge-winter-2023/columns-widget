@@ -17,3 +17,7 @@ from .match_rules import (
         ThreeFoldSouthWest,
         ThreeFoldNorthWest
         )
+from .faller_movements import (
+        FallerMovementRule,
+        FallerShiftRight
+        )
