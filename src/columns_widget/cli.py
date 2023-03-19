@@ -27,6 +27,8 @@ def columns_init() -> ColumnsGameLoop:
 @click.command()
 def columns():
     """Entry point to columns"""
-    GameEngine([columns_init()]).run()
+    ge = GameEngine([columns_init()])
+    ge._game_loops[0].view.add_event_listener("KeyRelease")
+    ge.run()
 
     

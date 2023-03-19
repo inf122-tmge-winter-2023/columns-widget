@@ -6,6 +6,7 @@
 
 import logging
 import time
+import queue
 
 from tilematch_tools import GameLoop, GameState, NullTile
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
@@ -15,7 +16,9 @@ from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
                         SingleStepDescent, AbsoluteDescent, \
                         ThreeFoldNorth, ThreeFoldEast, ThreeFoldSouth, ThreeFoldWest, \
                         ThreeFoldNorthEast, ThreeFoldNorthWest, \
-                        ThreeFoldSouthEast, ThreeFoldSouthWest
+                        ThreeFoldSouthEast, ThreeFoldSouthWest, \
+                        FallerShiftRight, FallerShiftLeft, \
+                        FallerShuffleUp, FallerShuffleDown
 from .game_view import ColumnsControls, ColumnsView
 
 LOGGER = logging.getLogger(__name__)
@@ -73,6 +76,30 @@ class ColumnsGameState(GameState):
                 ThreeFoldSouthEast
                 ]
 
+    def shift_faller_left(self):
+        if not self._active_faller:
+            return
+
+        FallerShiftLeft().move(self.board, self._active_faller)
+
+    def shift_faller_right(self):
+        if not self._active_faller:
+            return
+
+        FallerShiftRight().move(self.board, self._active_faller)
+
+    def rotate_faller_up(self):
+        if not self._active_faller:
+            return
+
+        FallerShuffleUp().move(self.board, self._active_faller, self.board, self._active_faller) # list twice for after move callback
+
+    def rotate_faller_down(self):
+        if not self._active_faller:
+            return
+
+        FallerShuffleDown().move(self.board, self._active_faller, self.board, self._active_faller) #list twice for after move callback
+
     def cycle_fallers(self) -> None:
         LOGGER.info('Cycling fallers')
         if self._active_faller:
@@ -118,7 +145,7 @@ class ColumnsGameLoop(GameLoop):
     """
 
     def handle_input(self):
-        super().handle_input()
+        self._handle_key_inputs()
         self._move_faller()
 
     def find_matches(self, match_rules):
@@ -148,6 +175,14 @@ class ColumnsGameLoop(GameLoop):
     def _move_faller(self):
         self.state.drop_faller()
 
-    
-
-
+    def _handle_key_inputs(self):
+        try:
+            while True:
+                key = self.view.key_event
+                LOGGER.info('Processing %s key input', key)
+                if key == 'a': self.state.shift_faller_left() 
+                if key == 'd': self.state.shift_faller_right()
+                if key == 'w': self.state.rotate_faller_up()
+                if key == 's': self.state.rotate_faller_down()
+        except queue.Empty:
+            LOGGER.info('No more key inputs to process')
