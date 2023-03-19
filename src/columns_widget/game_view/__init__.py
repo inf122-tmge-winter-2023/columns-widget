@@ -16,15 +16,3 @@ class ColumnsView(View):
     """Class representing the columns view"""
     def __init__(self, game_state: GameState):
         super().__init__(game_state)
-
-        #self._bind_keys()
-
-    def _bind_keys(self) -> None:
-        """
-            Bind the keys necessary for a game of columns
-            :rtype: None
-        """
-        self.add_event_listener(ColumnsControls.SHUFFLE_FALLER_DOWN)
-        self.add_event_listener(ColumnsControls.SHUFFLE_FALLER_UP)
-        self.add_event_listener(ColumnsControls.SHIFT_FALLER_LEFT)
-        self.add_event_listener(ColumnsControls.SHIFT_FALLER_RIGHT)
