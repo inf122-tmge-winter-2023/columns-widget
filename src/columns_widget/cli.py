@@ -9,6 +9,7 @@ import click
 from . import ColumnsGameState, ColumnsView, ColumnsGameLoop, ColumnsBoard, ColumnsScoring
 
 from tilematch_tools import GameEngine, BoardFactory
+from tilematch_tools.core.game_loop import FPSDelay
 
 def columns_init() -> ColumnsGameLoop:
     """
@@ -20,7 +21,7 @@ def columns_init() -> ColumnsGameLoop:
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
     view = ColumnsView(state)
-    loop = ColumnsGameLoop(state, view)
+    loop = ColumnsGameLoop(state, view, FPSDelay.FPS15)
     return loop
 
 @click.command()
