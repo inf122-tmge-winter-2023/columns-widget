@@ -11,8 +11,11 @@ from tilematch_tools import GameLoop, GameState, NullTile
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
 
 from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
-        ColumnsScoring, ColumnsBoard, \
-                        SingleStepDescent
+                        ColumnsScoring, ColumnsBoard, \
+                        SingleStepDescent, AbsoluteDescent, \
+                        ThreeFoldNorth, ThreeFoldEast, ThreeFoldSouth, ThreeFoldWest, \
+                        ThreeFoldNorthEast, ThreeFoldNorthWest, \
+                        ThreeFoldSouthEast, ThreeFoldSouthWest
 from .game_view import ColumnsControls, ColumnsView
 
 LOGGER = logging.getLogger(__name__)
@@ -56,6 +59,19 @@ class ColumnsGameState(GameState):
         """
         return self._next_faller
 
+    @property
+    def match_rules(self):
+        return [
+                ThreeFoldNorth,
+                ThreeFoldSouth,
+                ThreeFoldEast,
+                ThreeFoldWest,
+                ThreeFoldNorthWest,
+                ThreeFoldNorthEast,
+                ThreeFoldSouthWest,
+                ThreeFoldSouthEast
+                ]
+
     def cycle_fallers(self) -> None:
         LOGGER.info('Cycling fallers')
         self._active_faller = self._next_faller
@@ -96,11 +112,21 @@ class ColumnsGameLoop(GameLoop):
         self._move_faller()
 
     def find_matches(self, match_rules):
-        super().find_matches(match_rules)
+        return [
+            match_rule().check_match(self.state.board, x, y)
+            for match_rule in match_rules
+            for x in range(1, self.state.board.num_cols + 1)
+            for y in range(1, self.state.board.num_rows + 1)
+            if match_rule().check_match(self.state.board, x, y) is not None
+        ]
 
     def clear_matches(self, matches):
-        super().clear_matches(matches)
+        for match in matches:
+            self._state.clear_match(match)
+            self.await_delay()
+            self._state.adjust_score(match)
 
+ 
     def update_view(self):
         super().update_view()
 
