@@ -4,7 +4,12 @@
     :module_author: Nathan Mendoza (nathancm@uci.edu)
 """
 
+import logging
+
 from tilematch_tools.model import MovementRule, GameBoard, Tile, NullTile
+from .columns_tile import ColumnsFaller
+
+LOGGER = logging.getLogger(__name__)
 
 class SingleStepDescent(MovementRule):
     """
@@ -22,6 +27,21 @@ class SingleStepDescent(MovementRule):
         """
         tile_to_move.position = (tile_to_move.position.x, tile_to_move.position.y - 1)
         board.place_tile(tile_to_move)
+
+    def _mark_null(self, board: GameBoard):
+        if self._origin_y == ColumnsFaller.STAGED:
+            LOGGER.info('Tile fell from y=%d, not marking the staged tile as null', ColumnsFaller.STAGED)
+            return
+
+        LOGGER.info('Marking (%d, %d) with a null tile', self._origin_x, self._origin_y)
+        board.place_tile(
+                NullTile(
+                    **{
+                        'position': (self._origin_x, self._origin_y),
+                        'color': '#D3D3D3'
+                    }
+                )
+        )
 
 
 class AbsoluteDescent(MovementRule):
