@@ -56,3 +56,12 @@ class TestColumnsTileMovement:
         collapse.move(self.board, self.board.tile_at(5, 5))
         assert isinstance(self.board.tile_at(5, 5), NullTile)
 
+    def test_fall_moves_are_repeatable(self, fall):
+        x, y = (7, 7)
+        while y > 1:
+            fall.move(self.board, self.board.tile_at(x, y))
+            y -= 1
+            assert not isinstance(self.board.tile_at(x, y), NullTile)
+
+        assert isinstance(self.board.tile_at(x, y), ColumnsTile)
+
