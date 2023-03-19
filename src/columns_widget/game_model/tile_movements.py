@@ -7,6 +7,7 @@
 import logging
 
 from tilematch_tools.model import MovementRule, GameBoard, Tile, NullTile
+from tilematch_tools.model.exceptions import IllegalTileMovementException
 from .columns_tile import ColumnsFaller
 
 LOGGER = logging.getLogger(__name__)
@@ -66,3 +67,6 @@ class AbsoluteDescent(MovementRule):
         if tile_to_move.position.y != new_y_lvl:
             tile_to_move.position = (descent_file, new_y_lvl)
             board.place_tile(tile_to_move)
+        else:
+            LOGGER.error('Tile at (%d, %d is already as low as possible', tile_to_move.position.x, tile_to_move.position.y)
+            raise IllegalTileMovementException(f'Tile at ({tile_to_move.position.x}, {tile_to_move.position.y}) is already as low as possible')

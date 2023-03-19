@@ -41,6 +41,7 @@ class ColumnsGameState(GameState):
         super().__init__(board, score)
         self._active_faller = None
         self._next_faller = ColumnsFaller()
+        self._fallen = []
         self._last_fall = time.time_ns()
 
     @property
@@ -74,8 +75,12 @@ class ColumnsGameState(GameState):
 
     def cycle_fallers(self) -> None:
         LOGGER.info('Cycling fallers')
-        self._active_faller = self._next_faller
-        self._next_faller = ColumnsFaller()
+        if self._active_faller:
+            self._fallen.append(self._active_faller)
+            self._active_faller = None
+        else:
+            self._active_faller = self._next_faller
+            self._next_faller = ColumnsFaller()
 
     def drop_faller(self) -> None:
         self.__await_faller_delay()
@@ -101,6 +106,11 @@ class ColumnsGameState(GameState):
             pass
         self._last_fall = time.time_ns()
 
+    def collapse_all(self):
+        for x in range(1, ColumnsBoard.COLUMNS_BOARD_WIDTH + 1):
+            for y in range(1, ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1):
+                AbsoluteDescent().move(self.board, self.board.tile_at(x, y))
+
 
 class ColumnsGameLoop(GameLoop):
     """
@@ -112,6 +122,8 @@ class ColumnsGameLoop(GameLoop):
         self._move_faller()
 
     def find_matches(self, match_rules):
+        if self.state.active_faller:
+            return []
         return [
             match_rule().check_match(self.state.board, x, y)
             for match_rule in match_rules
@@ -125,7 +137,7 @@ class ColumnsGameLoop(GameLoop):
             self._state.clear_match(match)
             self.await_delay()
             self._state.adjust_score(match)
-
+        self.state.collapse_all()
  
     def update_view(self):
         super().update_view()
