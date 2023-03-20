@@ -63,6 +63,14 @@ class ColumnsGameState(GameState):
         return self._next_faller
 
     @property
+    def prev_faller(self) -> ColumnsFaller or None:
+        """
+            Return a reference to the last faller that has fallen
+            :rtype: ColumnsFaller if at least one faller has fallen or None
+        """
+        return self._fallen[-1] if self._fallen else None
+
+    @property
     def match_rules(self):
         return [
                 ThreeFoldNorth,
@@ -166,7 +174,12 @@ class ColumnsGameLoop(GameLoop):
         super().update_view()
 
     def gameover(self):
-        super().gameover()
+        if self.state.prev_faller:
+            return any(
+                tile.position.y == ColumnsFaller.STAGED
+                for tile in self.state.prev_faller.members
+            )
+        return False
 
     def _move_faller(self):
         self.state.drop_faller()
