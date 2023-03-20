@@ -21,7 +21,7 @@ def columns_init() -> ColumnsGameLoop:
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
     view = ColumnsView(state)
-    loop = ColumnsGameLoop(state, view, 1_000_000_000)
+    loop = ColumnsGameLoop(state, view, 750_000_000)
     return loop
 
 @click.command()

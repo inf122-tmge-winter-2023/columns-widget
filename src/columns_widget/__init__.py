@@ -155,8 +155,11 @@ class ColumnsGameLoop(GameLoop):
     def clear_matches(self, matches):
         for match in matches:
             self._state.clear_match(match)
-            self.await_delay()
             self._state.adjust_score(match)
+
+        self.await_delay()
+        self.update_view()
+        
         self.state.collapse_all()
  
     def update_view(self):
