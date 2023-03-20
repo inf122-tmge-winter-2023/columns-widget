@@ -195,3 +195,18 @@ class ColumnsGameLoop(GameLoop):
                 if key == 's': self.state.rotate_faller_down()
         except queue.Empty:
             LOGGER.info('No more key inputs to process')
+
+def columns_init() -> ColumnsGameLoop:
+    """
+        Initialize objects needed to start a game of columns
+        :returns: game objects
+        :rtype: ColumnsGameLoop
+    """
+    board = BoardFactory.create_board(ColumnsBoard, ColumnsBoard.COLUMNS_BOARD_WIDTH, ColumnsBoard.COLUMNS_BOARD_HEIGHT)
+    score = ColumnsScoring()
+    state = ColumnsGameState(board, score)
+    view = ColumnsView(state)
+    loop = ColumnsGameLoop(state, view, 750_000_000)
+    return loop
+
+

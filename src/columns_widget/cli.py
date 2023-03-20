@@ -6,23 +6,9 @@
 
 import click
 
-from . import ColumnsGameState, ColumnsView, ColumnsGameLoop, ColumnsBoard, ColumnsScoring
+from . import columns_init
 
-from tilematch_tools import GameEngine, BoardFactory
-from tilematch_tools.core.game_loop import FPSDelay
-
-def columns_init() -> ColumnsGameLoop:
-    """
-        Initialize objects needed to start a game of columns
-        :returns: game objects
-        :rtype: ColumnsGameLoop
-    """
-    board = BoardFactory.create_board(ColumnsBoard, ColumnsBoard.COLUMNS_BOARD_WIDTH, ColumnsBoard.COLUMNS_BOARD_HEIGHT)
-    score = ColumnsScoring()
-    state = ColumnsGameState(board, score)
-    view = ColumnsView(state)
-    loop = ColumnsGameLoop(state, view, 750_000_000)
-    return loop
+from tilematch_tools import GameEngine
 
 @click.command()
 def columns():
