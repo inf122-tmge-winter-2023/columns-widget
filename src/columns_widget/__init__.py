@@ -45,7 +45,6 @@ class ColumnsGameState(GameState):
         self._active_faller = None
         self._next_faller = ColumnsFaller()
         self._fallen = []
-        self._last_fall = time.time_ns()
 
     @property
     def active_faller(self) -> ColumnsFaller:
@@ -110,7 +109,6 @@ class ColumnsGameState(GameState):
             self._next_faller = ColumnsFaller()
 
     def drop_faller(self) -> None:
-        self.__await_faller_delay()
         if self.faller_can_fall():
             for tile in self._active_faller.members:
                 SingleStepDescent().move(self.board, tile)
@@ -127,11 +125,6 @@ class ColumnsGameState(GameState):
                 LOGGER.error('Faller is at the bottom of the board')
                 return False
         return False
-
-    def __await_faller_delay(self) -> None:
-        while time.time_ns() < self._last_fall + 1_000_000_000:
-            pass
-        self._last_fall = time.time_ns()
 
     def collapse_all(self):
         for x in range(1, ColumnsBoard.COLUMNS_BOARD_WIDTH + 1):
