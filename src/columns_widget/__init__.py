@@ -8,7 +8,7 @@ import logging
 import time
 import queue
 
-from tilematch_tools import GameLoop, GameState, NullTile
+from tilematch_tools import GameLoop, GameState, NullTile, BoardFactory
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
 
 from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
