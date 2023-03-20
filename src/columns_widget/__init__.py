@@ -19,7 +19,7 @@ from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
                         ThreeFoldSouthEast, ThreeFoldSouthWest, \
                         FallerShiftRight, FallerShiftLeft, \
                         FallerShuffleUp, FallerShuffleDown
-from .game_view import ColumnsControls, ColumnsView
+from .game_view import ColumnsView
 
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
@@ -145,6 +145,15 @@ class ColumnsGameLoop(GameLoop):
         Game loop logic for columns
     """
 
+    def __init__(self, state, view, delay, shuffle_up='w', shuffle_dn='s', shift_left='a', shift_right='d'):
+        super().__init__(state, view, delay)
+        self._controls = {
+            'up': shuffle_up,
+            'dn': shuffle_dn,
+            'sl': shift_left,
+            'sr': shift_right
+        }
+
     def handle_input(self):
         self._handle_key_inputs()
         self._move_faller()
@@ -189,16 +198,18 @@ class ColumnsGameLoop(GameLoop):
             while True:
                 key = self.view.key_event
                 LOGGER.info('Processing %s key input', key)
-                if key == 'a': self.state.shift_faller_left() 
-                if key == 'd': self.state.shift_faller_right()
-                if key == 'w': self.state.rotate_faller_up()
-                if key == 's': self.state.rotate_faller_down()
+                if key == self._controls['sl']: self.state.shift_faller_left() 
+                if key == self._controls['sr']: self.state.shift_faller_right()
+                if key == self._controls['up']: self.state.rotate_faller_up()
+                if key == self._controls['dn']: self.state.rotate_faller_down()
         except queue.Empty:
             LOGGER.info('No more key inputs to process')
 
-def columns_init() -> ColumnsGameLoop:
+def columns_init(controls = {'shuffle_up': 'w', 'shuffle_dn': 's', 'shift_left': 'a', 'shift_right': 'd'}) -> ColumnsGameLoop:
     """
         Initialize objects needed to start a game of columns
+        :arg controls: mapping of controls to game actions
+        :arg type: dict
         :returns: game objects
         :rtype: ColumnsGameLoop
     """
@@ -206,7 +217,7 @@ def columns_init() -> ColumnsGameLoop:
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
     view = ColumnsView(state)
-    loop = ColumnsGameLoop(state, view, 750_000_000)
+    loop = ColumnsGameLoop(state, view, 750_000_000, **controls)
     return loop
 
 
