@@ -31,7 +31,8 @@ class FallerMovementRule(MovementRule):
             :rtype: None
         """
         for tile in faller.members:
-            board.place_tile(tile)
+            if tile.position.y != ColumnsFaller.STAGED:
+                board.place_tile(tile)
 
     def __init__(self, callback = None):
         self._after = callback
