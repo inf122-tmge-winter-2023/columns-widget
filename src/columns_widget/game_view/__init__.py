@@ -8,5 +8,5 @@ from tilematch_tools import GameView, GameState
 
 class ColumnsView(GameView):
     """Class representing the columns view"""
-    def __init__(self, game_state: GameState):
-        super().__init__(game_state)
+    def __init__(self, parent, game_state: GameState):
+        super().__init__(parent, game_state)
