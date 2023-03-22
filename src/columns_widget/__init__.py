@@ -7,7 +7,7 @@
 import logging
 import time
 
-from tilematch_tools import GameLoop, GameState, NullTile
+from tilematch_tools import GameLoop, GameState, NullTile, BoardFactory
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
 
 from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
@@ -185,3 +185,4 @@ class ColumnsGameLoop(GameLoop):
         self.view.bind_all('<KeyRelease-d>', self.state.shift_faller_right)
         self.view.bind_all('<KeyRelease-w>', self.state.rotate_faller_up)
         self.view.bind_all('<KeyRelease-s>', self.state.rotate_faller_down)
+

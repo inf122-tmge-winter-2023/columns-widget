@@ -6,7 +6,7 @@
 
 import click
 
-from . import ColumnsGameState, ColumnsView, ColumnsGameLoop, ColumnsBoard, ColumnsScoring
+from . import columns_init
 
 from tilematch_tools import GameEngine, BoardFactory, Game
 
@@ -20,6 +20,7 @@ def columns_init() -> Game:
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
     return Game(state, ColumnsGameLoop, ColumnsView, 750_000_000)
+
 
 @click.command()
 def columns():
