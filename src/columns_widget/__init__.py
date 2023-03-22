@@ -18,7 +18,7 @@ from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
                         ThreeFoldSouthEast, ThreeFoldSouthWest, \
                         FallerShiftRight, FallerShiftLeft, \
                         FallerShuffleUp, FallerShuffleDown
-from .game_view import ColumnsView
+from .game_view import ColumnsView, ShiftFallerLeft, ShiftFallerRight, RotateFallerUp, RotateFallerDown
 
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
@@ -82,25 +82,25 @@ class ColumnsGameState(GameState):
                 ThreeFoldSouthEast
                 ]
 
-    def shift_faller_left(self, event):
+    def shift_faller_left(self):
         if not self._active_faller:
             return
 
         FallerShiftLeft().move(self.board, self._active_faller)
 
-    def shift_faller_right(self, event):
+    def shift_faller_right(self):
         if not self._active_faller:
             return
 
         FallerShiftRight().move(self.board, self._active_faller)
 
-    def rotate_faller_up(self, event):
+    def rotate_faller_up(self):
         if not self._active_faller:
             return
 
         FallerShuffleUp().move(self.board, self._active_faller, self.board, self._active_faller) # list twice for after move callback
 
-    def rotate_faller_down(self, event):
+    def rotate_faller_down(self):
         if not self._active_faller:
             return
 
@@ -166,8 +166,6 @@ class ColumnsGameLoop(GameLoop):
             self._state.clear_match(match)
             self._state.adjust_score(match)
 
-        time.sleep(1)
-        
         self.state.collapse_all()
  
 
@@ -181,8 +179,8 @@ class ColumnsGameLoop(GameLoop):
 
 
     def bind_inputs(self):
-        self.view.bind_all('<KeyRelease-a>', self.state.shift_faller_left)
-        self.view.bind_all('<KeyRelease-d>', self.state.shift_faller_right)
-        self.view.bind_all('<KeyRelease-w>', self.state.rotate_faller_up)
-        self.view.bind_all('<KeyRelease-s>', self.state.rotate_faller_down)
+        self.view.bind_key('<KeyRelease-a>', ShiftFallerLeft(self.state))
+        self.view.bind_key('<KeyRelease-d>', ShiftFallerRight(self.state))
+        self.view.bind_key('<KeyRelease-w>', RotateFallerUp(self.state))
+        self.view.bind_key('<KeyRelease-s>', RotateFallerDown(self.state))
 
