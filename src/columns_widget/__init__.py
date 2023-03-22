@@ -81,25 +81,25 @@ class ColumnsGameState(GameState):
                 ThreeFoldSouthEast
                 ]
 
-    def shift_faller_left(self):
+    def shift_faller_left(self, event):
         if not self._active_faller:
             return
 
         FallerShiftLeft().move(self.board, self._active_faller)
 
-    def shift_faller_right(self):
+    def shift_faller_right(self, event):
         if not self._active_faller:
             return
 
         FallerShiftRight().move(self.board, self._active_faller)
 
-    def rotate_faller_up(self):
+    def rotate_faller_up(self, event):
         if not self._active_faller:
             return
 
         FallerShuffleUp().move(self.board, self._active_faller, self.board, self._active_faller) # list twice for after move callback
 
-    def rotate_faller_down(self):
+    def rotate_faller_down(self, event):
         if not self._active_faller:
             return
 
@@ -142,8 +142,8 @@ class ColumnsGameLoop(GameLoop):
         Game loop logic for columns
     """
 
-    def __init__(self, state, view):
-        super().__init__(state, view)
+    def __init__(self, state, view, delay):
+        super().__init__(state, view, delay)
         self.bind_inputs()
 
     def tick(self):
@@ -165,8 +165,7 @@ class ColumnsGameLoop(GameLoop):
             self._state.clear_match(match)
             self._state.adjust_score(match)
 
-        self.await_delay()
-        self.update_view()
+        time.sleep(1)
         
         self.state.collapse_all()
  
