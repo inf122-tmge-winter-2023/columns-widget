@@ -19,7 +19,7 @@ def columns_init() -> Game:
     board = BoardFactory.create_board(ColumnsBoard, ColumnsBoard.COLUMNS_BOARD_WIDTH, ColumnsBoard.COLUMNS_BOARD_HEIGHT)
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
-    return Game(state, ColumnsGameLoop, ColumnsView, 5_000_000_000)
+    return Game(state, ColumnsGameLoop, ColumnsView, 750_000_000)
 
 @click.command()
 def columns():
