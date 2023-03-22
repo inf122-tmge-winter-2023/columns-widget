@@ -5,6 +5,7 @@
 """
 
 import logging
+import time
 
 from tilematch_tools import GameLoop, GameState, NullTile
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
