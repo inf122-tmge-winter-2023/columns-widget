@@ -6,9 +6,10 @@
 
 import click
 
-from . import columns_init
+from . import ColumnsBoard, ColumnsScoring, ColumnsGameState, ColumnsGameLoop, ColumnsView
 
 from tilematch_tools import GameEngine, BoardFactory, Game
+
 
 def columns_init() -> Game:
     """
