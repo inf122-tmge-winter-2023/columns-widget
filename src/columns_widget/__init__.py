@@ -5,8 +5,6 @@
 """
 
 import logging
-import time
-import queue
 
 from tilematch_tools import GameLoop, GameState, NullTile
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
@@ -19,7 +17,7 @@ from .game_model import ColumnsColor, ColumnsTile, ColumnsFaller, \
                         ThreeFoldSouthEast, ThreeFoldSouthWest, \
                         FallerShiftRight, FallerShiftLeft, \
                         FallerShuffleUp, FallerShuffleDown
-from .game_view import ColumnsControls, ColumnsView
+from .game_view import ColumnsView
 
 LOGGER = logging.getLogger(__name__)
 LOG_HANDLER = logging.StreamHandler()
@@ -135,9 +133,8 @@ class ColumnsGameState(GameState):
         return False
 
     def collapse_all(self):
-        for x in range(1, ColumnsBoard.COLUMNS_BOARD_WIDTH + 1):
-            for y in range(1, ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1):
-                AbsoluteDescent().move(self.board, self.board.tile_at(x, y))
+        for tile in self.board:
+            AbsoluteDescent().move(self.board, tile)
 
 
 class ColumnsGameLoop(GameLoop):
@@ -145,9 +142,12 @@ class ColumnsGameLoop(GameLoop):
         Game loop logic for columns
     """
 
-    def handle_input(self):
-        self._handle_key_inputs()
-        self._move_faller()
+    def __init__(self, state, view):
+        super().__init__(state, view)
+        self.bind_inputs()
+
+    def tick(self):
+        self.state.drop_faller()
 
     def find_matches(self, match_rules):
         if self.state.active_faller:
@@ -170,8 +170,6 @@ class ColumnsGameLoop(GameLoop):
         
         self.state.collapse_all()
  
-    def update_view(self):
-        super().update_view()
 
     def gameover(self):
         if self.state.prev_faller:
@@ -181,17 +179,9 @@ class ColumnsGameLoop(GameLoop):
             )
         return False
 
-    def _move_faller(self):
-        self.state.drop_faller()
 
-    def _handle_key_inputs(self):
-        try:
-            while True:
-                key = self.view.key_event
-                LOGGER.info('Processing %s key input', key)
-                if key == 'a': self.state.shift_faller_left() 
-                if key == 'd': self.state.shift_faller_right()
-                if key == 'w': self.state.rotate_faller_up()
-                if key == 's': self.state.rotate_faller_down()
-        except queue.Empty:
-            LOGGER.info('No more key inputs to process')
+    def bind_inputs(self):
+        self.view.bind_all('<KeyRelease-a>', self.state.shift_faller_left)
+        self.view.bind_all('<KeyRelease-d>', self.state.shift_faller_right)
+        self.view.bind_all('<KeyRelease-w>', self.state.rotate_faller_up)
+        self.view.bind_all('<KeyRelease-s>', self.state.rotate_faller_down)
