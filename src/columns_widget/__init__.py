@@ -6,7 +6,6 @@
 
 import logging
 import time
-import queue
 
 from tilematch_tools import GameLoop, GameState, NullTile, BoardFactory
 from tilematch_tools.model.exceptions import InvalidBoardPositionError
@@ -83,25 +82,25 @@ class ColumnsGameState(GameState):
                 ThreeFoldSouthEast
                 ]
 
-    def shift_faller_left(self):
+    def shift_faller_left(self, event):
         if not self._active_faller:
             return
 
         FallerShiftLeft().move(self.board, self._active_faller)
 
-    def shift_faller_right(self):
+    def shift_faller_right(self, event):
         if not self._active_faller:
             return
 
         FallerShiftRight().move(self.board, self._active_faller)
 
-    def rotate_faller_up(self):
+    def rotate_faller_up(self, event):
         if not self._active_faller:
             return
 
         FallerShuffleUp().move(self.board, self._active_faller, self.board, self._active_faller) # list twice for after move callback
 
-    def rotate_faller_down(self):
+    def rotate_faller_down(self, event):
         if not self._active_faller:
             return
 
@@ -135,9 +134,8 @@ class ColumnsGameState(GameState):
         return False
 
     def collapse_all(self):
-        for x in range(1, ColumnsBoard.COLUMNS_BOARD_WIDTH + 1):
-            for y in range(1, ColumnsBoard.COLUMNS_BOARD_HEIGHT + 1):
-                AbsoluteDescent().move(self.board, self.board.tile_at(x, y))
+        for tile in self.board:
+            AbsoluteDescent().move(self.board, tile)
 
 
 class ColumnsGameLoop(GameLoop):
@@ -145,18 +143,12 @@ class ColumnsGameLoop(GameLoop):
         Game loop logic for columns
     """
 
-    def __init__(self, state, view, delay, shuffle_up='w', shuffle_dn='s', shift_left='a', shift_right='d'):
+    def __init__(self, state, view, delay):
         super().__init__(state, view, delay)
-        self._controls = {
-            'up': shuffle_up,
-            'dn': shuffle_dn,
-            'sl': shift_left,
-            'sr': shift_right
-        }
+        self.bind_inputs()
 
-    def handle_input(self):
-        self._handle_key_inputs()
-        self._move_faller()
+    def tick(self):
+        self.state.drop_faller()
 
     def find_matches(self, match_rules):
         if self.state.active_faller:
@@ -174,13 +166,10 @@ class ColumnsGameLoop(GameLoop):
             self._state.clear_match(match)
             self._state.adjust_score(match)
 
-        self.await_delay()
-        self.update_view()
+        time.sleep(1)
         
         self.state.collapse_all()
  
-    def update_view(self):
-        super().update_view()
 
     def gameover(self):
         if self.state.prev_faller:
@@ -190,34 +179,10 @@ class ColumnsGameLoop(GameLoop):
             )
         return False
 
-    def _move_faller(self):
-        self.state.drop_faller()
 
-    def _handle_key_inputs(self):
-        try:
-            while True:
-                key = self.view.key_event
-                LOGGER.info('Processing %s key input', key)
-                if key == self._controls['sl']: self.state.shift_faller_left() 
-                if key == self._controls['sr']: self.state.shift_faller_right()
-                if key == self._controls['up']: self.state.rotate_faller_up()
-                if key == self._controls['dn']: self.state.rotate_faller_down()
-        except queue.Empty:
-            LOGGER.info('No more key inputs to process')
-
-def columns_init(controls = {'shuffle_up': 'w', 'shuffle_dn': 's', 'shift_left': 'a', 'shift_right': 'd'}) -> ColumnsGameLoop:
-    """
-        Initialize objects needed to start a game of columns
-        :arg controls: mapping of controls to game actions
-        :arg type: dict
-        :returns: game objects
-        :rtype: ColumnsGameLoop
-    """
-    board = BoardFactory.create_board(ColumnsBoard, ColumnsBoard.COLUMNS_BOARD_WIDTH, ColumnsBoard.COLUMNS_BOARD_HEIGHT)
-    score = ColumnsScoring()
-    state = ColumnsGameState(board, score)
-    view = ColumnsView(state)
-    loop = ColumnsGameLoop(state, view, 750_000_000, **controls)
-    return loop
-
+    def bind_inputs(self):
+        self.view.bind_all('<KeyRelease-a>', self.state.shift_faller_left)
+        self.view.bind_all('<KeyRelease-d>', self.state.shift_faller_right)
+        self.view.bind_all('<KeyRelease-w>', self.state.rotate_faller_up)
+        self.view.bind_all('<KeyRelease-s>', self.state.rotate_faller_down)
 

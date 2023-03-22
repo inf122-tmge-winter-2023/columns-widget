@@ -4,9 +4,10 @@
     :module_author: Nathan Mendoza (nathancm@uci.edu)
 """
 
-from tilematch_tools import View, GameState
+from tilematch_tools import GameView, GameState
 
-class ColumnsView(View):
+
+class ColumnsView(GameView):
     """Class representing the columns view"""
-    def __init__(self, game_state: GameState):
-        super().__init__(game_state)
+    def __init__(self, parent, game_state: GameState):
+        super().__init__(parent, game_state)
