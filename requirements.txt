@@ -1,4 +1,4 @@
 click
 python-dotenv
-tilematch_tools @ git+https://github.com/inf122-tmge-winter-2023/tile-matching-tools
+tilematch_tools @ git+https://github.com/inf122-tmge-winter-2023/tile-matching-tools@hot-fix-gameloop
 
