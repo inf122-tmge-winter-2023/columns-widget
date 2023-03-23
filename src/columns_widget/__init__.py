@@ -44,6 +44,16 @@ class ColumnsGameState(GameState):
         self._active_faller = None
         self._next_faller = ColumnsFaller()
         self._fallen = []
+    
+    def gameover(self):
+        if self.prev_faller:
+            return any(
+                tile.position.y == ColumnsFaller.STAGED
+                for tile in self.state.prev_faller.members
+            )
+        return False
+
+
 
     @property
     def active_faller(self) -> ColumnsFaller:
@@ -166,18 +176,11 @@ class ColumnsGameLoop(GameLoop):
             self._state.clear_match(match)
             self._state.adjust_score(match)
 
+
+    def clean_up_state(self):
         self.state.collapse_all()
- 
 
-    def gameover(self):
-        if self.state.prev_faller:
-            return any(
-                tile.position.y == ColumnsFaller.STAGED
-                for tile in self.state.prev_faller.members
-            )
-        return False
-
-
+    
     def bind_inputs(self):
         self.view.bind_key('<KeyRelease-a>', ShiftFallerLeft(self.state))
         self.view.bind_key('<KeyRelease-d>', ShiftFallerRight(self.state))
