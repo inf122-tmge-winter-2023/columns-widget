@@ -152,10 +152,17 @@ class ColumnsGameLoop(GameLoop):
     """
         Game loop logic for columns
     """
+    P1_BIND = {'up': 'w', 'down': 's', 'left': 'a', 'right': 'd'}
+    P2_BIND = {'up': 'i', 'down': 'k', 'left': 'j', 'right': 'l'}
+
+    __count = 0
 
     def __init__(self, state, view, delay):
         super().__init__(state, view, delay)
-        self.bind_inputs()
+        if ColumnsGameLoop.__count > 0:
+            self.bind_inputs(self.P2_BIND)
+        else:
+            self.bind_inputs(self.P1_BIND)
 
     def tick(self):
         self.state.drop_faller()
@@ -182,9 +189,9 @@ class ColumnsGameLoop(GameLoop):
         time.sleep(1)
 
     
-    def bind_inputs(self):
-        self.view.bind_key('<KeyRelease-a>', ShiftFallerLeft(self.state))
-        self.view.bind_key('<KeyRelease-d>', ShiftFallerRight(self.state))
-        self.view.bind_key('<KeyRelease-w>', RotateFallerUp(self.state))
-        self.view.bind_key('<KeyRelease-s>', RotateFallerDown(self.state))
+    def bind_inputs(self, bindings = {'up': 'w', 'down': 's', 'left': 'a', 'right': 'd'}):
+        self.view.bind_key(f'<KeyRelease-{bindings["left"]}>', ShiftFallerLeft(self.state))
+        self.view.bind_key(f'<KeyRelease-{bindings["right"]}>', ShiftFallerRight(self.state))
+        self.view.bind_key(f'<KeyRelease-{bindings["up"]}>', RotateFallerUp(self.state))
+        self.view.bind_key(f'<KeyRelease-{bindings["down"]}>', RotateFallerDown(self.state))
 

@@ -15,8 +15,9 @@ def columns_init() -> Game:
     """
         Initialize objects needed to start a game of columns
         :returns: game objects
-        :rtype: ColumnsGameLoop
+        :rtype: Game
     """
+
     board = BoardFactory.create_board(ColumnsBoard, ColumnsBoard.COLUMNS_BOARD_WIDTH, ColumnsBoard.COLUMNS_BOARD_HEIGHT)
     score = ColumnsScoring()
     state = ColumnsGameState(board, score)
