@@ -145,15 +145,16 @@ class ColumnsGameLoop(GameLoop):
     P1_BIND = {'up': 'w', 'down': 's', 'left': 'a', 'right': 'd'}
     P2_BIND = {'up': 'i', 'down': 'k', 'left': 'j', 'right': 'l'}
 
-    __count = 0
+    __count = 1
 
     def __init__(self, state, view, delay):
         super().__init__(state, view, delay)
-        if ColumnsGameLoop.__count > 0:
+        if ColumnsGameLoop.__count % 2 == 0:
             self.bind_inputs(self.P2_BIND)
         else:
             self.bind_inputs(self.P1_BIND)
-            ColumnsGameLoop.__count += 1
+        ColumnsGameLoop.__count += 1
+
 
     def tick(self):
         self.state.drop_faller()
