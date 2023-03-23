@@ -163,6 +163,7 @@ class ColumnsGameLoop(GameLoop):
             self.bind_inputs(self.P2_BIND)
         else:
             self.bind_inputs(self.P1_BIND)
+            ColumnsGameLoop.__count += 1
 
     def tick(self):
         self.state.drop_faller()
