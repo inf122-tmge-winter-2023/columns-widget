@@ -49,7 +49,7 @@ class ColumnsGameState(GameState):
         if self.prev_faller:
             return any(
                 tile.position.y == ColumnsFaller.STAGED
-                for tile in self.state.prev_faller.members
+                for tile in self.prev_faller.members
             )
         return False
 
@@ -179,6 +179,7 @@ class ColumnsGameLoop(GameLoop):
 
     def clean_up_state(self):
         self.state.collapse_all()
+        time.sleep(1)
 
     
     def bind_inputs(self):
